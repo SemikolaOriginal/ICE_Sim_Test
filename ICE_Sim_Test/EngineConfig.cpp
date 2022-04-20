@@ -22,11 +22,12 @@ void EngineConfig::checkDataCorrects() {
 bool EngineConfig::isWrong() {
 	return this->MV.empty();
 }
+
 /*
-CfgFile sctructure:
+CfgFile sctructure (line by line):
 	I	- int					- engine moment of inertia
-	M	- vector<unsigned int>	- engine torque
-	V	- vector<unsigned int>	- crankshaft rotation speed
+	M	- vector<unsigned int>	- engine torque (delimiter ',' without spaces)
+	V	- vector<unsigned int>	- crankshaft rotation speed (delimiter ',' without spaces)
 	To	- int - overheat temperature
 	HM	- double				- coefficient of heating rate versus torque
 	HV	- double				- coefficient of dependence of the heating rate on the speed of rotation of the crankshaft
@@ -37,7 +38,7 @@ EngineConfig::EngineConfig(string config_path) {
 	ifstream inputFile("engine.cfg");
 
 	if (!inputFile.is_open()) {
-		#ifdef DEBUG
+		#ifdef _DEBUG
 		cout << "Error at opening engine configuration file" << endl;
 		#else
 		cout << "EngineConfig(string config_path): open file error" << endl;

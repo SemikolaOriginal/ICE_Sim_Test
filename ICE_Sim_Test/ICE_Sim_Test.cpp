@@ -14,14 +14,14 @@ extern void overheatEngineAutoTimeTest(shared_ptr<Engine>& engine, int ambientTe
 int main(){
     shared_ptr<Engine> engine = std::make_shared<Engine>("engine.cfg");
 
-    #ifdef DEBUG
+    #ifdef _DEBUG
     cout << "shared_ptr: " << engine.use_count() << "(" << engine << ")" << endl;
     #endif // DEBUG
 
     if (!engine || engine->isWrong()){
         cout << "Error of engine object creation" << endl;
         system("pause");
-        exit(EXIT_FAILURE);
+        return EXIT_FAILURE;
     }
     
     int ambientTemperature = readAmbientTemperature();

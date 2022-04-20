@@ -32,9 +32,6 @@ INPUT:
         cout << "You did input not a integer number\nTry input: " << endl;
         goto INPUT;
     }
-    #ifdef DEBUG
-    cout << "Ta = " << Ta << endl;
-    #endif
     return Ta;
 }
 
@@ -52,13 +49,14 @@ void overheatEngineLinerTimeTest(shared_ptr<Engine>& engine, int ambientTemperat
         engine->update(deltaTime, ambientTemperature);
         time += deltaTime;
 
-        #ifdef DEBUG
+        #ifdef _DEBUG
         cout << "V = " << engine->currentV << "\tT = " << engine->getCurrentTemperature() << endl;
         #endif
 
         if (engine->is_overheat()){
             cout << "\tengine is overheat" << endl;
             engine->stop();
+            break;
         }
     }
 
@@ -84,7 +82,7 @@ void overheatEngineAutoTimeTest(shared_ptr<Engine>& engine, int ambientTemperatu
         time += deltaTime;
         engine->update(deltaTime, ambientTemperature);
 
-        #ifdef DEBUG
+        #ifdef _DEBUG
         cout << "V = " << engine->currentV << "\tT = " << engine->getCurrentTemperature() <<
             "\tdt = " << deltaTime << endl;
         #endif

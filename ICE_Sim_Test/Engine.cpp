@@ -1,10 +1,12 @@
 #include "Engine.h"
 
+#ifdef _DEBUG
+
 #include <iostream>
 using std::cout;
 using std::endl;
 
-#include <map>
+#endif
 
 void Engine::start(int ambientTemperature){
 	if(this->isStarted)
@@ -24,7 +26,7 @@ void Engine::stop() {
 }
 void Engine::update(double deltaTime, int ambientTemperature) {
 	double temp = this->getCurrentEngineTempIncrement(deltaTime, ambientTemperature);
-	#ifdef DEBUG
+	#ifdef _DEBUG
 	cout << "getCurrentEngineTempIncrement: " << temp << endl;
 	#endif // DEBUG
 	this->currentTemperature += temp;
@@ -82,18 +84,11 @@ int Engine::getCurrentM() {
 		static_cast<double>(static_cast<int>(MV_range.second->first) - static_cast<int>(MV_range.first->first));
 	double b = static_cast<double>(static_cast<int>(MV_range.second->second) - k * static_cast<int>(MV_range.second->first));
 
-	#ifdef DEBUG
-	cout << "k = " << k << ", b = " << b << endl;
-	#endif
-
 	return static_cast<int>(round((k * this->currentV + b)));
 }
 
 double Engine::getCurrentHeatCoef() {
 	int M = this->getCurrentM();
-	#ifdef DEBUG
-	cout << "getCurrentM: " << M << endl;
-	#endif
 	return (M * this->HM + this->currentV * this->currentV * this->HV);
 }
 
@@ -102,11 +97,6 @@ double Engine::getCurrentCoolingCoef(int ambientTemperature) {
 }
 
 double Engine::getCurrentEngineTempIncrement(double time, int ambientTemperature) {
-
-	#ifdef DEBUG
-	cout << "getCurrentHeatCoef: " << temp << endl;
-	#endif
-
 	return (this->getCurrentHeatCoef() + this->getCurrentCoolingCoef(ambientTemperature)) * time;
 }
 
