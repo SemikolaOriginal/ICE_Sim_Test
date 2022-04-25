@@ -31,8 +31,7 @@
 
 		EngineConfig(
 			unsigned int set_I, 
-			map<unsigned int, 
-			unsigned int set_MV, 
+			map<unsigned int, unsigned int> set_MV, 
 			int set_To, 
 			double set_HM, 
 			double set_HV, 
@@ -54,7 +53,7 @@
 		void stop();
 		void update(double deltaTime, int ambientTemperature);
 		void cooling(int setEngineTemperature);
-	
+
 ##### Для проверки состояния двигателя предусмотрены методы:
 
 		bool is_started();
@@ -75,10 +74,10 @@
  - расчет приращения температуры двигателя `temp` для `Engine.currentTemperature`;
  - определение состояния перегрева `Engine.isOverheat`.
 
-> **Примечание 2.1:** скорость нагрева двигателя рассчитывается как ![formula](https://render.githubusercontent.com/render/math?math=V_H=M*H_M+V^2*H_V[\frac{C^0}{s}]).
+> **Примечание 2.1:** скорость нагрева двигателя рассчитывается как ![formula](https://render.githubusercontent.com/render/math?math=V_H=M*H_M) + ![formula](https://render.githubusercontent.com/render/math?math=V^{2}*H_V[\frac{C^0}{s}]).
 
 
-> **Примечание 2.2:** скорость охлаждения двигателя рассчитывается как ![formula](https://render.githubusercontent.com/render/math?math=V_C=C*(T_{ambient}-T_{engine}) [\frac{C^0}{s}]).
+> **Примечание 2.2:** скорость охлаждения двигателя рассчитывается как ![formula](https://render.githubusercontent.com/render/math?math=V_C=C*(T_{ambient}-T_{engine})[\frac{C^0}{s}]).
 
 ## 3 Тестирование двигателя
 При тестировании двигателя симулируется его старт, работа через метод `Engine.update` до момент обнаружения перегрева в цикле симуляции его работы и останов двигателя. 
