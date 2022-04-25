@@ -6,13 +6,10 @@ using std::cout;
 using std::endl;
 
 #include "Engine.h"
-
-extern int readAmbientTemperature();
-extern void overheatEngineLinerTimeTest(shared_ptr<Engine>& engine, int ambientTemperature);
-extern void overheatEngineAutoTimeTest(shared_ptr<Engine>& engine, int ambientTemperature);
+#include "Tests.h"
 
 int main(){
-    shared_ptr<Engine> engine = std::make_shared<Engine>("engine.cfg");
+    shared_ptr<Engine> engine(new Engine("engine.cfg"));
 
     #ifdef _DEBUG
     cout << "shared_ptr: " << engine.use_count() << "(" << engine << ")" << endl;

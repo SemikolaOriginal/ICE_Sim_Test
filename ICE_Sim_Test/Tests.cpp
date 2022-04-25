@@ -10,6 +10,7 @@ using std::shared_ptr;
 using std::string;
 
 #include "Engine.h"
+#include "Tests.h"
 
 int readAmbientTemperature() {
     /*
