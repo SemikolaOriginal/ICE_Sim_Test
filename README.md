@@ -31,8 +31,7 @@
 
 		EngineConfig(
 			unsigned int set_I, 
-			map<unsigned int, 
-			unsigned int set_MV, 
+			map<unsigned int, unsigned int> set_MV, 
 			int set_To, 
 			double set_HM, 
 			double set_HV, 
