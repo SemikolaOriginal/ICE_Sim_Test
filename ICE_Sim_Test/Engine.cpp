@@ -107,7 +107,3 @@ int Engine::getCurrentTemperature() {
 double Engine::getDeltaTime() {
 	return static_cast<double>(this->I) * static_cast<double>(this->deltaV) / static_cast<double>(this->getCurrentM());
 }
-
-bool Engine::isWrong() {
-	return this->MV.empty();
-};

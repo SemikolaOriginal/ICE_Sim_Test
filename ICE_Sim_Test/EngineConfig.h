@@ -24,7 +24,7 @@ using std::string;
 class EngineConfig
 {
 private:
-	void checkDataCorrects();
+	bool checkDataCorrects();
 
 protected:
 	unsigned int I = 0;
@@ -35,7 +35,6 @@ protected:
 	double C = 0.0;
 
 public:
-	virtual bool isWrong();
 
 	EngineConfig(
 		unsigned int set_I,
@@ -44,14 +43,7 @@ public:
 		double set_HM,
 		double set_HV,
 		double set_C
-	) : I(set_I),
-		MV(set_MV),
-		To(set_To),
-		HM(set_HM),
-		HV(set_HV),
-		C(set_C) {
-		this->checkDataCorrects();
-	};
+	);
 	EngineConfig(string config_path);
 };
 

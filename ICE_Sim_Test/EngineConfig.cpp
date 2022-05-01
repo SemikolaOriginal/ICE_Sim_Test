@@ -1,4 +1,5 @@
 #include "EngineConfig.h"
+#include "EngineException.h"
 
 #include <fstream>
 using std::ifstream;
@@ -11,17 +12,35 @@ using std::cout;
 using std::cin;
 using std::endl;
 
-void EngineConfig::checkDataCorrects() {
+
+bool EngineConfig::checkDataCorrects() {
 	if (
 		this->HM < 0.0 ||
 		this->HV < 0.0 ||
-		this->C < 0.0) {
-		this->~EngineConfig();
+		this->C < 0.0  || 
+		this->MV.empty()) {
+		return false;
 	}
+	return true;
 }
-bool EngineConfig::isWrong() {
-	return this->MV.empty();
-}
+
+EngineConfig::EngineConfig(
+	unsigned int set_I,
+	map<unsigned int, unsigned int> set_MV,
+	int set_To,
+	double set_HM,
+	double set_HV,
+	double set_C
+) : I(set_I),
+MV(set_MV),
+To(set_To),
+HM(set_HM),
+HV(set_HV),
+C(set_C) {
+	if(!this->checkDataCorrects()){
+		throw EngineException::EngineException("detected error in loaded engine configuration", EngineException::ENGINE_EXCEPTIONS::INVALID_CONFIG);
+	}
+};
 
 /*
 CfgFile sctructure (line by line):
@@ -38,27 +57,22 @@ EngineConfig::EngineConfig(string config_path) {
 	ifstream inputFile("engine.cfg");
 
 	if (!inputFile.is_open()) {
-		#ifdef _DEBUG
-		cout << "Error at opening engine configuration file" << endl;
-		#else
-		cout << "EngineConfig(string config_path): open file error" << endl;
-		#endif // DEBUG
-
-		this->~EngineConfig();
+		throw EngineException::EngineException("error of opening configuration file", EngineException::ENGINE_EXCEPTIONS::CREATION_FAILED);
 		return;
 	};
 
-	unsigned int set_I = 0;
-	map<unsigned int, unsigned int> set_MV;
-	int set_To = 0;
-	double set_HM = 0.0;
-	double set_HV = 0.0;
-	double set_C = 0.0;
-
-	inputFile >> set_I;
-	inputFile.ignore();
-
 	string tempStr = "", tempStr2 = "";
+
+	std::getline(inputFile, tempStr);
+	try{
+		this->I = std::stoul(tempStr);
+	}
+	catch (...) {
+		throw EngineException::EngineException("error by reading I-parameter from configuration file", EngineException::ENGINE_EXCEPTIONS::INVALID_CONFIG);
+	}
+	
+	tempStr = "";
+	tempStr2 = "";
 
 	std::getline(inputFile, tempStr);
 	std::getline(inputFile, tempStr2);
@@ -73,7 +87,7 @@ EngineConfig::EngineConfig(string config_path) {
 				key = std::stoul(tempStr2);
 			}
 			catch (...) {
-				this->~EngineConfig();
+				throw EngineException::EngineException("error by reading M(V) function from configuration file", EngineException::ENGINE_EXCEPTIONS::INVALID_CONFIG);
 				return;
 			}
 
@@ -81,7 +95,7 @@ EngineConfig::EngineConfig(string config_path) {
 				value = std::stoul(tempStr);
 			}
 			catch (...) {
-				this->~EngineConfig();
+				throw EngineException::EngineException("error by reading M(V) function from configuration file", EngineException::ENGINE_EXCEPTIONS::INVALID_CONFIG);
 				return;
 			}
 
@@ -93,14 +107,14 @@ EngineConfig::EngineConfig(string config_path) {
 				key = std::stoul(tempStr2.substr(0, tempStr2.find_first_of(','))); 
 			}
 			catch (...) {
-				this->~EngineConfig();
+				throw EngineException::EngineException("error by reading M(V) function from configuration file", EngineException::ENGINE_EXCEPTIONS::INVALID_CONFIG);
 				return;
 			}
 			try {
 				value = std::stoul(tempStr.substr(0, tempStr.find_first_of(',')));
 			}
 			catch (...) {
-				this->~EngineConfig();
+				throw EngineException::EngineException("error by reading M(V) function from configuration file", EngineException::ENGINE_EXCEPTIONS::INVALID_CONFIG);
 				return;
 			}
 
@@ -108,23 +122,51 @@ EngineConfig::EngineConfig(string config_path) {
 			tempStr.erase(0, tempStr.find_first_of(',') + 1);
 		}
 
-		set_MV.insert(std::pair<unsigned int, unsigned int>(key, value));
+		this->MV.insert(std::pair<unsigned int, unsigned int>(key, value));
 
 	} while (!tempStr.empty() && !tempStr2.empty());
 
+	std::getline(inputFile, tempStr);
+	try {
+		this->To = std::stoi(tempStr);
+	}
+	catch (...) {
+		throw EngineException::EngineException("error by reading To-parameter from configuration file", EngineException::ENGINE_EXCEPTIONS::INVALID_CONFIG);
+	}
+	tempStr = "";
 
+	std::getline(inputFile, tempStr);
+	try {
+		this->HM = std::stod(tempStr);
+	}
+	catch (...) {
+		throw EngineException::EngineException("error by reading Hm-parameter from configuration file", EngineException::ENGINE_EXCEPTIONS::INVALID_CONFIG);
+	}
+	tempStr = "";
 
-	inputFile >> set_To >> set_HM >> set_HV >> set_C;
+	std::getline(inputFile, tempStr);
+	try {
+		this->HV = std::stod(tempStr);
+	}
+	catch (...) {
+		throw EngineException::EngineException("error by reading Hv-parameter from configuration file", EngineException::ENGINE_EXCEPTIONS::INVALID_CONFIG);
+	}
+	tempStr = "";
+
+	std::getline(inputFile, tempStr);
+	try {
+		this->C = std::stod(tempStr);
+	}
+	catch (...) {
+		throw EngineException::EngineException("error by reading C-parameter from configuration file", EngineException::ENGINE_EXCEPTIONS::INVALID_CONFIG);
+	}
+	tempStr = "";
+
 	inputFile.close();
 
-	this->I = set_I;
-	this->MV = set_MV;
-	this->To = set_To;
-	this->HM = set_HM;
-	this->HV = set_HV;
-	this->C = set_C;
-
-	this->checkDataCorrects(); // !
+	if (!this->checkDataCorrects()) {
+		throw EngineException::EngineException("detected error in loaded engine configuration", EngineException::ENGINE_EXCEPTIONS::INVALID_CONFIG);
+	}
 
 	cout << "EngineCFG:\n\tI = " << this->I << endl;
 

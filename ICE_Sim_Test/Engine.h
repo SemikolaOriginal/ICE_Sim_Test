@@ -19,19 +19,19 @@ public:
 	void start(int ambientTemperature);
 	void stop();
 	void update(double deltaTime, int ambientTemperature);
+	void cooling(int setEngineTemperature);
+
 	bool is_started();
 	bool is_overheat();
 	bool is_MaxCrankshaftSpeedReached();
-	void cooling(int setEngineTemperature);
 
 	int getCurrentM();
-	double getCurrentHeatCoef();
-	double getCurrentCoolingCoef(int ambientTemperature);
-	double getCurrentEngineTempIncrement(double time, int ambientTemperature);
+	inline double getCurrentHeatCoef();
+	inline double getCurrentCoolingCoef(int ambientTemperature);
+	inline double getCurrentEngineTempIncrement(double time, int ambientTemperature);
 	int getCurrentTemperature();
-	double getDeltaTime();
 
-	bool isWrong();
+	double getDeltaTime();
 
 	Engine(
 		int set_I,
