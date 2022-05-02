@@ -66,7 +66,7 @@ void overheatEngineLinerTimeTest(shared_ptr<Engine>& engine, int ambientTemperat
     }
 
     engine->stop();
-    cout << "\ttest duration: " << static_cast<int>(time) << "min " << static_cast<int>(time) % 60 << "sec" << endl;
+    cout << "\ttest duration: " << static_cast<int>(time / 60) << "min " << static_cast<int>(time) % 60 << "sec" << endl;
 }
 
 void overheatEngineAutoTimeTest(shared_ptr<Engine>& engine, int ambientTemperature) {
@@ -99,5 +99,5 @@ void overheatEngineAutoTimeTest(shared_ptr<Engine>& engine, int ambientTemperatu
     }
 
     engine->stop();
-    cout << "\ttest duration: " << static_cast<int>(time) << "min " << static_cast<int>(time) % 60 << "sec" << endl;
+    cout << "\ttest duration: " << static_cast<int>(time / 60) << "min " << static_cast<int>(time) % 60 << "sec" << endl;
 }
