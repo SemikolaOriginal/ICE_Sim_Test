@@ -16,10 +16,10 @@ public:
 	unsigned int currentV = 0;
 	int deltaV = 0;
 
-	void start(int ambientTemperature);
+	void start(double ambientTemperature);
 	void stop();
-	void update(double deltaTime, int ambientTemperature);
-	void cooling(int setEngineTemperature);
+	void update(double deltaTime, double& ambientTemperature);
+	void cooling(double setEngineTemperature);
 
 	bool is_started();
 	bool is_overheat();
@@ -27,9 +27,9 @@ public:
 
 	int getCurrentM();
 	inline double getCurrentHeatCoef();
-	inline double getCurrentCoolingCoef(int ambientTemperature);
-	inline double getCurrentEngineTempIncrement(double time, int ambientTemperature);
-	int getCurrentTemperature();
+	inline double getCurrentCoolingCoef(const double& ambientTemperature);
+	inline double getCurrentEngineTempIncrement(double time, const double& ambientTemperature);
+	double getCurrentTemperature();
 
 	double getDeltaTime();
 

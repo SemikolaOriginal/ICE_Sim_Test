@@ -7,6 +7,8 @@ using std::cout;
 using std::endl;
 
 #include "EngineException.h"
+#include "TestException.h"
+
 #include "Engine.h"
 #include "Tests.h"
 
@@ -14,6 +16,10 @@ int main(){
     shared_ptr<Engine> engine = nullptr;
     try {
         engine = make_shared<Engine>("engine.cfg");
+    }
+    catch (std::exception& e) {
+        std::cerr << "Exception catched : " << e.what() << std::endl;
+        return EXIT_FAILURE;
     }
     catch (EngineException& engineException) {
         if (engineException.getExceptionNumber() == EngineException::ENGINE_EXCEPTIONS::CREATION_FAILED) {
@@ -24,16 +30,47 @@ int main(){
         system("pause");
         return EXIT_FAILURE;
     }
-
-    #ifdef _DEBUG
-    cout << "shared_ptr: " << engine.use_count() << "(" << engine << ")" << endl;
-    #endif // DEBUG
     
-    int ambientTemperature = readAmbientTemperature();
-    overheatEngineLinerTimeTest(engine, ambientTemperature);
+    double ambientTemperature = static_cast<double>(readAmbientTemperature());
+
+    shared_ptr<EngineTestStand> engineTestStand = nullptr;
+    try {
+        engineTestStand = make_shared<EngineTestStand>(engine);
+    }
+    catch (TestException& testException) {
+        if (testException.getExceptionNumber() == TestException::TEST_EXCEPTIONS::INVALID_POINTER_TO_ENGINE) {
+            cout << "Detected ivalid pointer to engine" << endl;
+            return EXIT_FAILURE;
+        }
+    }
+    catch (std::exception& e) {
+        cout << "Exception catched : " << e.what() << endl;
+        return EXIT_FAILURE;
+    }
+
+    engineTestStand->timeTypeByIntegration = TIME_TYPE_BY_INTEGRATION::CONST_TIME;
+    engineTestStand->testEndpoint = TEST_ENDPOINT::BY_OVERHEAT | TEST_ENDPOINT::BY_REACHED_MAX_CRANKSHAFT_SPEED;
+    engineTestStand->forcedStop = FORCED_STOP_OF_TEST::BY_DETECTED_LIMIT_OF_PARAM;
+
+    try {
+        engineTestStand->overheatEngineTest(ambientTemperature);
+    }
+    catch (EngineException& e) {
+        cerr << e.getExceptionMessage() << endl;
+    }
 
     engine->cooling(ambientTemperature);
-    overheatEngineAutoTimeTest(engine, ambientTemperature);
+
+    engineTestStand->testEndpoint = TEST_ENDPOINT::BY_OVERHEAT;
+    engineTestStand->timeTypeByIntegration = TIME_TYPE_BY_INTEGRATION::FUNCTION_VARIABLE_TIME;
+    engineTestStand->forcedStop = FORCED_STOP_OF_TEST::BY_DETECTED_LIMIT_OF_PARAM;
+
+    try {
+        engineTestStand->overheatEngineTest(ambientTemperature);
+    }
+    catch (EngineException& e) {
+        cerr << e.getExceptionMessage() << endl;
+    }
 
     system("pause");
     return EXIT_SUCCESS;
